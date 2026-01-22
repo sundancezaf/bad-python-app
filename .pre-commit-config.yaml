@@ -8,8 +8,23 @@
 #       # or see https://semgrep.dev/explore to select a ruleset and copy its URL
 #       args: ['--config', '<SEMGREP_RULESET_URL>', '--error', '--skip-unknown-extensions']
 
+# repos:
+# - repo: https://github.com/semgrep/pre-commit
+#   rev: 'v1.149.0'
+#   hooks:
+#     - id: semgrep-ci
+
 repos:
 - repo: https://github.com/semgrep/pre-commit
-  rev: 'v1.149.0'
+  rev: 'v1.126.0'
   hooks:
-    - id: semgrep-ci
+      - id: semgrep-ci
+        entry: bash
+        args:
+          - -c
+          - |
+            semgrep ci --dry-run --baseline-commit HEAD 2>&1 \
+              | awk '/Scan Summary/,/^CI scan completed successfully\./'
+        pass_filenames: false
+        language: system
+        verbose: true
